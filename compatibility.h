@@ -10,9 +10,11 @@
 #include <linux/in.h>
 #include <linux/acpi.h>
 
-#if defined(RTL8152_S5_WOL) && defined(CONFIG_PM)
-#include <linux/reboot.h>
-#endif /* defined(RTL8152_S5_WOL) && defined(CONFIG_PM) */
+
+
+
+
+
 
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,31)
 	#include <linux/mdio.h>
@@ -100,21 +102,12 @@
 	#define BITS_PER_BYTE				8
 	#define reinit_completion(x)			((x)->done = 0)
 #if LINUX_VERSION_CODE < KERNEL_VERSION(3,12,0)
-#if LINUX_VERSION_CODE < KERNEL_VERSION(3,11,0)
-	#define DEVICE_ATTR_RW(_name) \
-		struct device_attribute dev_attr_##_name = __ATTR(_name, 0644, _name##_show, _name##_store)
-	#define DEVICE_ATTR_RO(_name) \
-		struct device_attribute dev_attr_##_name = __ATTR_RO(_name)
 #if LINUX_VERSION_CODE < KERNEL_VERSION(3,10,0)
 	#define NETIF_F_HW_VLAN_CTAG_RX			NETIF_F_HW_VLAN_RX
 	#define NETIF_F_HW_VLAN_CTAG_TX			NETIF_F_HW_VLAN_TX
 #if LINUX_VERSION_CODE < KERNEL_VERSION(3,8,0)
-	#define USB_DEVICE_INTERFACE_CLASS(vend, prod, cl) \
-		.match_flags = USB_DEVICE_ID_MATCH_DEVICE | \
-			       USB_DEVICE_ID_MATCH_INT_CLASS, \
-		.idVendor = (vend), \
-		.idProduct = (prod), \
-		.bInterfaceClass = (cl)
+	#define USB_DEVICE_INTERFACE_CLASS(vend, prod, iclass) \
+		USB_DEVICE_AND_INTERFACE_INFO(vend, prod, iclass, 0xff, 0)
 
 #if LINUX_VERSION_CODE < KERNEL_VERSION(3,7,0)
 	#ifndef SPEED_UNKNOWN
@@ -513,7 +506,6 @@
 	}
 #endif /* LINUX_VERSION_CODE < KERNEL_VERSION(3,8,0) */
 #endif /* LINUX_VERSION_CODE < KERNEL_VERSION(3,10,0) */
-#endif /* LINUX_VERSION_CODE < KERNEL_VERSION(3,11,0) */
 	static inline bool usb_device_no_sg_constraint(struct usb_device *udev)
 	{
 		return 0;
@@ -539,10 +531,6 @@
 #endif /* LINUX_VERSION_CODE < KERNEL_VERSION(3,19,0) */
 #endif /* LINUX_VERSION_CODE < KERNEL_VERSION(4,0,0) */
 #endif /* LINUX_VERSION_CODE < KERNEL_VERSION(4,1,0) */
-	static inline int eth_platform_get_mac_address(struct device *dev, u8 *mac_addr)
-	{
-		return -EOPNOTSUPP;
-	}
 #endif /* LINUX_VERSION_CODE < KERNEL_VERSION(4,5,0) */
 #endif /* LINUX_VERSION_CODE < KERNEL_VERSION(4,9,0) */
 #endif /* LINUX_VERSION_CODE < KERNEL_VERSION(4,10,0) */
@@ -656,3 +644,4 @@ struct rtltool_cmd {
 };
 
 #endif /* LINUX_COMPATIBILITY_H */
+
