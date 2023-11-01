@@ -24,7 +24,7 @@ modules:
 	$(MAKE) -C $(KERNELDIR) M=$(PWD) modules
 
 .PHONY: all
-all: clean modules install
+all: clean modules install install_rules
 
 .PHONY: clean
 clean:
@@ -43,10 +43,16 @@ ifneq ($(INBOXDRIVER),)
 endif
 	$(MAKE) -C $(KERNELDIR) M=$(PWD) INSTALL_MOD_DIR=$(TARGET_PATH) modules_install
 	modprobe r8152
-
+	modinfo -F version r8152
+	depmod -a
+	update-initramfs -u
 .PHONY: install_rules
 install_rules:
 	install --group=root --owner=root --mode=0644 $(RULEFILE) $(RULEDIR)
 
+.PHONY: uninstall
+uninstall:
+	@rm -f `modinfo r8152 2> /dev/null | sed -n 's/^filename: *//p'`
+	@rm -f $(RULEDIR)/$(RULEFILE)
 endif
 
